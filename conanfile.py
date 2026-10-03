@@ -1,7 +1,7 @@
 import os
 import sys
+import sysconfig
 import xml.etree.ElementTree as ET
-from distutils.sysconfig import get_python_lib
 from io import StringIO
 from pathlib import Path
 
@@ -164,7 +164,12 @@ class Lanelet2Conan(ConanFile):
 
     def _pythonpath(self):
         return os.path.relpath(
-            get_python_lib(prefix=self.package_folder), start=self.package_folder
+            sysconfig.get_path(
+                "purelib",
+                scheme="nt" if os.name == "nt" else "posix_prefix",
+                vars={"base": self.package_folder},
+            ),
+            start=self.package_folder,
         )
 
     def source(self):
